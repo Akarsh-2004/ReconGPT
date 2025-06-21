@@ -1,0 +1,2 @@
+NER :- named entity recognition  is a subtask of information extraction that seeks to locate and classify named entities mentioned in unstructured text into pre-defined categories 
+Transformers: is a library of pretrained NLP, computer vision, audio and mutimodel models for inference
