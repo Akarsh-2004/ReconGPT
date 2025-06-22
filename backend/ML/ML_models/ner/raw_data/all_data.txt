@@ -1,0 +1,1405 @@
+Famous Chollima deploying Python version of GolangGhost RAT
+
+
+
+
+
+
+By 
+
+
+Vanja Svajcer
+
+
+
+
+
+
+
+            Wednesday, June 18, 2025 06:00
+        
+
+
+
+
+
+                                Threats
+                            
+
+
+
+                                SecureX
+                            
+
+
+
+                                APT
+                            
+
+
+
+                                DPRK
+                            
+
+
+
+
+
+
+
+
+
+
+In May 2025, Cisco Talos identified a Python-based remote access trojan (RAT) we call “PylangGhost,” used exclusively by a North Korean-aligned threat actor. PylangGhost is functionally similar to the previously documented GolangGhost RAT, sharing many of the same capabilities. 
+In recent campaigns, the threat actor 
+Famous Chollima
+ — potentially made up of multiple groups — has been using a Python-based version of their trojan to target Windows systems, while continuing to deploy a Golang-based version for MacOS users. Linux users are not targeted in these latest campaigns. 
+The attacks are targeting employees with experience in cryptocurrency and blockchain technologies. 
+Based on open-source intelligence, only a small number of users, predominantly in India, are affected. Cisco product telemetry does not indicate that there are any affected Cisco users. 
+Since mid-2024, the threat actor group 
+Famous Chollima (aka Wagemole)
+, a North Korean-aligned threat actor, has been very active through several well-documented campaigns. These campaigns include using variants of Contagious Interview (aka DeceptiveDevelopment) and creating fake job advertisements and skill-testing pages. In the latter, users are instructed to copy and paste (ClickFix) a malicious command line in order to install drivers necessary to conduct the final skill-testing stage.  
+Toward the end of the year, researchers 
+documented Famous Chollima’s remote access trojan
+ (RAT) called “GolangGhost” in its source code format, which was frequently used as the final payload in the threat actor’s ClickFix campaigns. 
+In May 2025, Cisco Talos discovered threat actors starting to deploy a functionally equivalent Python variant of GolangGhost trojan, which we call “PylangGhost.” 
+Fake job interview sites mislead users to PylangGhost infection 
+Famous Chollima seek financial benefit using a two-pronged approach: first, by creating fake employers for the purpose of jobseekers exposing their personal information, and second by deploying fake employees as workers in targeted victim companies.  
+This blog focuses on the first method, where real software engineers, marketing employees, designers and other workers are targeted by fake recruiters and instructed to visit skill-testing pages in order to move forward with their application. 
+Based on the advertised positions, it is clear that the Famous Chollima is broadly targeting individuals with previous experience in cryptocurrency and blockchain technologies. The skill-testing sites attempt to impersonate real companies such as Coinbase, Archblock, Robinhood, Parallel Studios, Uniswap and others, which helps with the targeting.  
+Figure 1. Examples of initial fake job sites.
+Each target is sent an invite code to visit a testing website where, depending on the position, they are instructed to enter their details and answer several questions to test their experience and skills. The sites are created using the React framework and have very similar visual designs, no matter the type of position.  
+Figure 2. Example of questions asked for an illegitimate Business Development Manager position at Robinhood.
+Once the user answers all the questions and provides personal details, the site displays an invitation to record a video for the interviewer, recommending that the user request camera access by pressing a button. 
+Figure 3. A camera setup page displayed once questions are answered.
+Finally, when the user requests camera, the site displays the instructions for the user to copy, paste and execute a command to allegedly install the required video drivers, if the OS is supported. When Talos used Windows and MacOS test systems, the instructions were shown as seen in Figure 4 and 5. The Linux test system led to another error message, without any instructions to download and install the payload.  
+Figure 4. Windows instructions to copy, paste and execute a malicious command. 
+Figure 5. MacOS instructions to copy, paste and execute a malicious command. 
+Instructions for downloading the alleged fix are different based on the browser fingerprinting, and also given in appropriate shell language for the OS: PowerShell or Command Shell for Windows, and Bash for MacOS.
+Figure 6. Command Shell, PowerShell or Bash instructions to download a payload.
+PylangGhost - Python variant of GolangGhost 
+As the Golang variant of the RAT is already well-documented, this blog focuses on the Python version and the similarities between the two. The initial stage consists of a command line which the fake webpage tells the unsuspecting user to copy, paste and execute. 
+The command line uses either PowerShell Invoke-Webrequest or curl to download a ZIP file containing the PylangGhost modules as well as Visual Basic Script file. This script is responsible for unzipping the Python library stored in the “lib.zip file” and launching the trojan by running a renamed Python interpreter using the file “nvidia.py” as the Python program to run. 
+Figure 7. The first stage simply unzips a Python distribution library and launches the RAT. 
+ PylangGhost consists of six well-structured Python modules. It is not clear to Talos why the threat actors decided to create two variants using a different programming language, or which was created first. Based on the comments in the code, it is unlikely that the threat actors used a large language model (LLM) to help rewrite the code for Python. One of the strings in the configuration module file (“config.py”) indicates that the Python version is 1.0, while the appropriate configuration variable in the Golang version indicates that the version is 2.0. However, Talos cannot definitively conclude that those two version numbers are comparable. 
+ The execution starts with the file “nvidia.py”, which performs several tasks: It creates a registry value to launch the RAT every time user logs onto the system, generates a GUID for the system to be used in communication with command and control (C2) server, connects to the C2 server and enters the command loop for communication with the server.  
+Figure 8. ”nvidia.py” executes the main loop for communication with the C2 server
+ The configuration file “config.py” specifies the commands that can be received from the server, which are identical to the commands previously documented in the Golang version of the RAT. These commands enable remote control the infected system and the theft of cookies and credentials from over 80 browser extensions, including password managers and cryptocurrency wallets, including Metamask, 1Password, NordPass, Phantom, Bitski, Initia, TronLink and MultiverseX. 
+The command handling module, “command.py”, defines function handlers and handles the commands received from the C2 server.  
+
+
+
+
+Command
+ 
+Functionality
+ 
+qwer
+ 
+COMMAND_INFORMATION - collect information about the infected system, username, OS version etc
+ 
+asdf
+ 
+COMMAND_FILE_UPLOAD - file upload
+ 
+zxcv
+ 
+COMMAND_FILE_DOWNLOAD - file download
+ 
+vbcx
+ 
+COMMAND_OS_SHELL - launch an OS shell for remote access and control of the infected system
+ 
+ghdj
+ 
+COMMAND_WAIT - sleep for 
+a number of
+ seconds specified by the C2 server
+ 
+r4ys
+ 
+COMMAND_
+AUT
+O
+ - browser information stealing command
+ 
+89io
+ 
+AUT
+O
+_CHROME_GATHER_COMMAND - subcommand of the browser information stealer command
+ 
+gi
+%#
+ 
+AUT
+O
+_CHROME_COOKIE_COMMAND - subcommand of the browser information stealer command
+ 
+dghh
+ 
+COMMAND_EXIT
+ 
+
+
+
+
+Table 1. Commands and functionalities.
+The module “auto.py” contains the functionality for stealing the stored browser credentials and session cookies, as well as collecting data from various browser extensions.  
+“Api.py” is responsible for implementing the communications protocol with the C2 server, using RC4 encryption to encrypt packets over otherwise unencrypted HTTP used while communicating with the C2 server. The data in a HTTP packet is encrypted with RC4 algorithm, but the encryption key is also sent within the packet structure. The packet begins with 16 bytes of MD5 checksum for the rest of the packet, for verification of data integrity, followed by 128 bytes containing the RC4 encryption key, followed by an encrypted data blob.  
+Finally, “util.py” handles the compression and decompression of files. 
+Comparison of Python and Golang modules 
+To assess the similarity between the two versions, Talos compares the names of the modules written in different languages as well as their functionality. The structure, the naming conventions and the function names are very similar, which indicates that the developers of the different versions either worked closely together or are the same person.   
+
+
+
+
+Module
+ 
+Python name
+ 
+Golang name
+ 
+Main function module
+ 
+nvidia.py
+ 
+cloudfixer.go
+ 
+Configuration module
+ 
+config.py
+ 
+config/
+constans.go
+ 
+Main command loop
+ 
+nvidia.py
+ 
+core/
+loop.go
+ 
+Command handlers
+ 
+command.py
+ 
+core/
+loop.go
+ 
+Browser Stealer functionality
+ 
+aut
+o
+.py
+ 
+aut
+o
+/* modules
+ 
+File compression
+ 
+util.py
+ 
+util/
+compress.go
+ 
+Base64 message encoding
+ 
+command.py
+ 
+command/
+stackcmd.go
+ 
+Duplicate process check
+ 
+nvidia.py
+ 
+instance/
+check.go
+ 
+Communications protocol
+ 
+api.py
+ 
+transport/
+htxp.go
+ 
+
+
+
+
+Table 2. Comparison of Python and Golang RAT module names. 
+Coverage  
+Ways our customers can detect and block this threat are listed below.  
+Cisco Secure Endpoint
+ (formerly AMP for Endpoints) is ideally suited to prevent the execution of the malware detailed in this post. Try Secure Endpoint for free 
+here.
+  
+Cisco Secure Email
+ (formerly Cisco Email Security) can block malicious emails sent by threat actors as part of their campaign. You can try Secure Email for free 
+here
+.  
+Cisco Secure Firewall
+ (formerly Next-Generation Firewall and Firepower NGFW) appliances such as 
+Threat Defense Virtual
+, 
+Adaptive Security Appliance
+ and 
+Meraki MX
+ can detect malicious activity associated with this threat.  
+Cisco Secure Network/Cloud Analytics
+ (Stealthwatch/Stealthwatch Cloud) analyzes network traffic automatically and alerts users of potentially unwanted activity on every connected device.  
+Cisco Secure Malware Analytics
+ (Threat Grid) identifies malicious binaries and builds protection into all Cisco Secure products.  
+Cisco Secure Access
+ is a modern cloud-delivered Security Service Edge (SSE) built on Zero Trust principles.  Secure Access provides seamless transparent and secure access to the internet, cloud services or private application no matter where your users work.  Please contact your Cisco account representative or authorized partner if you are interested in a free trial of Cisco Secure Access.  
+Umbrella
+, Cisco’s secure internet gateway (SIG), blocks users from connecting to malicious domains, IPs and URLs, whether users are on or off the corporate network.   
+Cisco Secure Web Appliance
+ (formerly Web Security Appliance) automatically blocks potentially dangerous sites and tests suspicious sites before users access them.   
+Additional protections with context to your specific environment and threat data are available from the 
+Firewall Management Center
+.  
+Cisco Duo
+ provides multi-factor authentication for users to ensure only those authorized are accessing your network.   
+Open-source Snort Subscriber Rule Set customers can stay up to date by downloading the latest rule pack available for purchase on 
+Snort.org
+.  
+ClamAV detections available for this threat:
+
+
+
+
+Win.Backdoor.PyChollima-10045389-0
+Win.Backdoor.PyChollima-10045388-0
+Win.Backdoor.PyChollima-10045387-0
+Win.Backdoor.PyChollima-10045386-0
+Win.Backdoor.PyChollima-10045385-0
+Win.Backdoor.PyChollima-10045384-0
+
+
+
+
+IOCs 
+The IOCs can also be found in our 
+GitHub repository here
+.
+SHA256
+ 
+
+
+
+
+a206ea9b415a0eafd731b4eec762a5b5e8df8d9007e93046029d83316989790a - auto.py  
+c2137cd870de0af6662f56c97d27b86004f47b866ab27190a97bde7518a9ac1b - auto.py  
+0d14960395a9d396d413c2160570116e835f8b3200033a0e4e150f5e50b68bec - api.py 
+8ead05bb10e6ab0627fcb3dd5baa59cdaab79aa3522a38dad0b7f1bc0dada10a - api.py 
+5273d68b3aef1f5ebf420b91d66a064e34c4d3495332fd492fecb7ef4b19624e - nvidia.py 
+267009d555f59e9bf5d82be8a046427f04a16d15c63d9c7ecca749b11d8c8fc3 - nvidia.py 
+7ac3ffb78ae1d2d9b5d3d336d2a2409bd8f2f15f5fb371a1337dd487bd471e32 - nvidia.py 
+b7ab674c5ce421d9233577806343fc95602ba5385aa4624b42ebd3af6e97d3e5 - util.py 
+fb5362c4540a3cbff8cb1c678c00cc39801dc38151edc4a953e66ade3e069225 - util.py 
+d029be4142fca334af8fe0f5f467a0e0e1c89d3b881833ee53c1e804dc912cfd - command.py 
+b8402db19371db55eebea08cf1c1af984c3786d03ff7eae954de98a5c1186cee - command.py 
+1f482ce7e736a8541cc16e3e80c7890d13fb1f561ae38215a98a75dce1333cee - config.py 
+ed170975e3fd03440360628f447110e016f176a44f951fcf6bc8cdb47fbd8e0e - config.py 
+929c69827cd2b03e7b03f9a53c08268ab37c29ac4bd1b23425f66a62ad74a13b - config.py 
+127406b838228c39b368faa9d6903e7e712105b5ad8f43a987a99f7b10c29780 - config.py 
+0ec9d355f482a292990055a9074fdabdb75d72630b920a61bdf387f2826f5385 - update.vbs 
+c2d2320ae43aaa0798cbcec163a0265cba511f8d42d90d45cd49a43fe1c40be6 - update.vbs 
+e7c2b524f5cb0761a973accc9a4163294d678f5ce6aca73a94d4e106f4c8fea4 - nvidiaRelease.zip 
+28198494f0ed5033085615a57573e3d748af19e4bd6ea215893ebeacf6e576df - vdriverWin.zip 
+fc71a1df2bb4ac2a1cc3f306c3bdf0d754b9fab6d1ac78e4eceba5c6e7aee85d - nvidiaRelease.zip 
+d3500266325555c9e777a4c585afc05dfd73b4cbe9dba741c5876593b78059fd - nvidiaRelease.zip 
+
+
+
+
+
+C2 servers
+ 
+
+
+
+
+hxxp[://]31[.]57[.]243[.]29:8080 
+hxxp[://]154[.]58[.]204[.]15:8080 
+hxxp[://]212[.]81[.]47[.]217:8080 
+hxxp[://] 31[.]57[.]243[.]190:8080
+
+
+
+
+Download host names
+ 
+
+
+
+
+api[.]quickcamfix[.]online   
+api[.]auto-fixer[.]online   
+api[.]quickdriverupdate[.]online   
+api[.]camtuneup[.]online   
+api[.]driversofthub[.]online   
+api[.]drive-release[.]cloud   
+api[.]vcamfixer[.]online   
+api[.]nvidia-drive[.]cloud   
+api[.]nvidia-release[.]us   
+api[.]autodriverfix[.]online   
+api[.]camdriversupport[.]com   
+api[.]smartdriverfix[.]cloud   
+api[.]drivercams[.]cloud   
+api[.]camtechdrivers[.]com   
+api[.]web-cam[.]cloud   
+api[.]camera-drive[.]org   
+api[.]nvidia-release[.]org 
+api[.]fixdiskpro[.]online 
+api[.]autocamfixer[.]online
+
+
+
+
+Fake job interview host names
+ 
+
+
+
+
+krakenhire[.]com  
+yuga[.]skillquestions[.]com  
+uniswap[.]speakure[.]com  
+doodles[.]skillquestions[.]com  
+www[.]hireviavideo[.]com  
+kraken[.]livehiringpro[.]com  
+quiz-nest[.]com  
+www[.]smartvideohire[.]com  
+www[.]talent-hiringstep[.]com  
+provevidskillcheck[.]com  
+skill[.]vidintermaster[.]com  
+digitaltalent[.]review  
+robinhood[.]ecareerscan[.]com  
+evalswift[.]com  
+livetalentpro[.]com  
+quantumnodespro[.]com  
+evalassesso[.]com  
+parallel[.]eskillora[.]com  
+coinbase[.]talentmonitoringtool[.]com  
+uniswap[.]testforhire[.]com  
+coinbase[.]talenthiringtool[.]com  
+crosstheages[.]skillence360[.]com 
+parallel [.] eskillprov [.] com 
+assesstrack [.] com 
+coinbase [.] talentmonitoringtool [.] com 
+talent-hiringtalk[.]com 
+uniswap[.]prehireiq[.]com 
+fast-video-recording[.]com
+
+
+
+
+
+
+
+
+
+
+Share this post
+
+A week with a "smart" car
+
+
+
+
+
+
+By 
+
+
+Thorsten Rosendahl
+
+
+
+
+
+
+
+            Wednesday, June 18, 2025 14:00
+        
+
+
+
+
+
+                            Threat Source newsletter
+                        
+
+
+
+
+
+
+
+
+
+
+Welcome to this week’s edition of the Threat Source newsletter. 
+June 9 was Whit Monday — a bank holiday here in Germany — so I decided to take the whole week off. It turned out to be the perfect opportunity to try out a brand new car. Little did I know, I was about to get a crash course in modern vehicle technology (and a few unexpected life lessons).
+There’s an 
+EU regulation
+ that requires new cars to come equipped with “Advanced Vehicle Systems,” which include features like driver drowsiness and attention warnings, lane-keeping systems and intelligent speed assistance. I hadn’t swapped cars in over a decade, so I was blissfully unaware of just how intrusive these systems could be. 
+While I generally appreciate technology that makes our life safer, these features gave me a tough time. The car seemed to beep at me constantly, so much so that the beeping itself became a distraction. Instead of focusing on the road, I found myself trying to decipher what each alert meant. After a few kilometers, I had to pull over and consult the manual just to figure out how to disable these “helpful” assistants. 
+Problem solved? Not quite. Every time I turned off and restarted the car, the systems re-enabled themselves. Disabling the lane-keeping assistant was just a button press, but turning off the “intelligent” speed assistant required a convoluted sequence: six menu clicks, a long press then a short click. I had to dig out the manual every time. 
+You might think I’m just cutting corners, or that I should pay better attention to speed limits. But here’s the thing: Technology fails, and these systems are no exception. Sometimes the cameras miss speed signs, or worse, pick up the wrong ones. I’ve read about people putting stickers on their windshields to block the camera, only to discover the system then falls back to GPS data, which can be outdated or just plain wrong. On one occasion, it thought a car was on a 50 km/h road when the person was actually on the 
+Autobahn
+ directly next and parallel to the road, which famously has no speed limit. 
+Some drivers try to muffle the alerts by gluing the speaker, but in modern cars, the system also lowers the radio volume to make sure you hear the alarm. Pulling the fuse would disable the emergency brake, too — not something I’m willing to risk, regardless of how insurance would feel about it.
+I ended up learning two important lessons that week. The first was technical: I dove into the world of Controller Area Network (CAN) bus wiring, protocols, network gateways and tools like SavvyCAN to understand how these systems work... and maybe how to disable a few, purely for educational purposes. 
+The second lesson hit me later, and it was more personal. In my job, I often preach about deploying multi-factor authentication (MFA) everywhere. My focus has always been on keeping out the bad guys, not on the user experience. I never understood why anyone would use apps to automatically accept authentication pushes — it seemed crazy to me. But after a a few days with the car, I finally saw things from the user’s perspective. Security tools can’t just be effective; they also have to be easy to use. Reducing friction, like using single sign-on or minimizing unnecessary clicks, matters just as much. Users also need to understand why these barriers are in place. 
+Tomorrow is another holiday. Maybe I’ll spend it exploring 
+Kali Linux 2025.2
+ and the latest CARsenal tools (formerly CAN Arsenal). Who knows? I might just tap a wire or two — for educational purposes only, of course.
+The one big thing 
+Cisco Talos has discovered
+ that the North Korean-aligned threat actor Famous Chollima has been actively targeting cryptocurrency and blockchain professionals (primarily in India) through sophisticated phishing campaigns. Previously known for using the GolangGhost trojan, they've now introduced a Python-based variant called PylangGhost, which retains the same capabilities. Recent campaigns have targeted Windows users with the Python version, while MacOS users are still being hit with the Golang-based variant.
+Why do I care? 
+Even if you're not in the cryptocurrency or blockchain space, this campaign highlights how threat actors are constantly evolving their tools. It's a reminder that no matter how niche or localized an attack might seem, the techniques could easily be adapted to broader campaigns. Plus, if attackers succeed in these targeted efforts, stolen credentials could ripple across networks and platforms globally.
+So now what?
+Take this as your cue to double-check your defenses. Ensure your organization's security tools can detect Python and Golang-based malware, and educate your teams on recognizing phishing attempts, especially fake job offers. Stay proactive by monitoring emerging threats like PylangGhost, because even if you're not the target today, tomorrow isn’t a guarantee.
+Top security headlines of the week 
+AI Scraping Bots Are Breaking Open Libraries, Archives, and Museums
+AI bots that scrape the internet for training data are hammering the servers of libraries, archives, museums and galleries, and are in some cases knocking their collections offline. (
+404 Media
+)
+Paraguay Suffered Data Breach: 7.4 Million Citizen Records Leaked on Dark Web
+Hackers leaked the personal data of 7.4 million people in Paraguay on the dark web. A cybercriminal group called "Cyber PMC" demanded $7.4 million, blaming government corruption and poor security. (
+Security Affairs
+)
+Trend Micro fixes critical vulnerabilities in multiple products
+Trend Micro has released security updates to address multiple critical-severity remote code execution and authentication bypass vulnerabilities. (
+Bleeping Computer
+)
+Can’t get enough Talos? 
+When legitimate tools go rogue
+From LOLBins to open-source utilities like DonPAPI, threat actors are leveraging legitimate tools to evade detection and carry out attacks. 
+Read the blog here.
+Microsoft Patch Tuesday for June 2025
+ 
+Microsoft released its monthly security update last week, which includes 66 vulnerabilities affecting a range of products, including 10 that Microsoft marked as “critical.” 
+Read the blog here.
+Upcoming events where you can find Talos 
+REcon
+ (June 27 – 29) Montreal, Canada 
+NIRMA
+ (July 28 – 30) St. Augustine, FL 
+Black Hat USA
+ (Aug. 2 – 7) Las Vegas, NV
+Most prevalent malware files from Talos telemetry over the past week 
+SHA 256: 9f1f11a708d393e0a4109ae189bc64f1f3e312653dcf317a2bd406f18ffcc507
+MD5: 2915b3f8b703eb744fc54c81f4a9c67f
+VirusTotal: 
+https://www.virustotal.com/gui/file/9f1f11a708d393e0a4109ae189bc64f1f3e312653dcf317a2bd406f18ffcc507
+Typical Filename: VID001.exe
+Claimed Product: N/A
+Detection Name: Win.Worm.Coinminer::1201
+SHA 256: a31f222fc283227f5e7988d1ad9c0aecd66d58bb7b4d8518ae23e110308dbf91
+MD5: 7bdbd180c081fa63ca94f9c22c457376
+VirusTotal: 
+https://www.virustotal.com/gui/file/a31f222fc283227f5e7988d1ad9c0aecd66d58bb7b4d8518ae23e110308dbf91/details
+  
+Typical Filename: IMG001.exe
+Claimed Product: N/A
+Detection Name: Simple_Custom_Detection
+
+
+
+
+
+
+
+
+Share this post
+
+When legitimate tools go rogue
+
+
+
+
+
+
+By 
+
+
+Hazel Burton
+
+
+
+
+
+
+
+            Wednesday, June 18, 2025 06:09
+        
+
+
+
+
+
+                            The Need to Know
+                        
+
+
+
+
+
+
+
+
+
+
+Late one Tuesday night, Elena’s phone buzzed with an alert from her company’s SIEM. Her team had set up a rule to flag when certain system tools — 
+whoami
+, 
+nltest
+ and 
+nslookup
+—were run one after another in quick succession. That exact pattern had just triggered on a computer in the Finance Department. The time? 2:13 a.m.
+Concerned, Elena logged in from home to investigate. Almost immediately, two more alerts appeared. One signaled that Mimikatz (a tool popular with threat actors to steal credentials) had been used on the same Finance machine. The other reported a PsExec download (a command line tool used to execute processes) on a domain controller.
+Elena and her team began isolating systems and tracing the activity, determined to stop it before it spread any further. What first looked like routine system commands now clearly pointed to something more serious.
+This story is a compartmentalized version of something we’re seeing more and more often in 
+Cisco Talos Incident Response engagements
+: Rather than inventing their own tools, attackers are making use of familiar, legitimate software — just with a very different purpose. 
+What exactly are LOLBins?
+A big part of this trend revolves around “living off the land binaries,” or LOLBins. LOLBins are tools built into an operating system that attackers can use to carry out malicious actions without having to download or install any new software or utilities.
+They’re especially concerning because they’re already installed, trusted, and frequently used for normal IT tasks, making them difficult to detect or block without disrupting operations.
+Defenders can reference the “Living Off The Land Binaries, Scripts and Libraries” or LOLBAS project, which maintains a list of known LOLBins on 
+GitHub
+.
+But it’s not just LOLBins…
+LOLBins were used often across 
+Talos IR engagements in 2024
+, but we actually saw a wider variety of commercial and open-source tools used as well. Threat actors likely gravitate towards these because they can choose which tools best suit their needs best (or which commercial tools will blend into the victim environment). 
+Take DonPAPI, for example. This is an open-source tool observed in several recent Talos IR engagements that automates credential dumping remotely on multiple Windows computers. It locates and retrieves Windows Data Protection API (DPAPI) protected credentials, a process also known as “DPAPI dumping.” DonPAPI searches for certain files, including Wi-Fi keys, RDP passwords and credentials saved in web browsers, to help authenticate and move laterally to identify other assets in the environment.
+From an identity perspective, open-source tools like DonPAPI pose a significant risk to organizations based on their wide availability on code repositories like GitHub and their ease of installation. 
+Legit tool, suspicious intent
+Here’s how this plays out in the field, using the top three examples of most used tools as observed in Cisco Talos’ 
+2024 Year in Review
+:
+These tools weren’t built for attackers, but they’ve become some of the most common ingredients in ransomware and advanced persistent threat (APT) campaigns.
+In a recent episode of 
+The Talos Threat Perspective
+, one of our senior Talos IR consultants spoke about tools that were created for legitimate purposes (e.g., HRSword, REMCOS RAT and Cobalt Strike), but played a large part in the ransomware engagements investigated by Talos IR in 2025.
+Remote Access Management tools
+Lately, Talos has seen an increase in the use of remote monitoring and management (RMM) tools during attacks — the same kind of software IT teams and managed service providers rely on to access systems remotely. These tools are designed for legitimate use, but in the wrong hands, they become a stealthy way to maintain persistence on compromised systems without raising alarms.
+One colleague shared a story that stuck with me: In some incidents, the attackers showed up with an entire toolkit of RMM software, testing each one to see which would slip through unnoticed (or not get blocked). Often, they’d use exactly the same tools already trusted by the target or their service provider, such as ScreenConnect or AnyDesk.
+It’s like they arrived at the front door with a ring full of keys, trying each one until something clicked. And when the tool they use is something the environment already knows — already trusts — the question becomes: how do you spot the intruder when they’re using your own keys?
+How do you detect something that looks normal?
+Let’s go back to Elena. Her team stopped the attack not just because of the alert, but because they knew what should be running on that workstation. They had clear asset inventories and network behavior baselines, and they conducted continuous anomaly monitoring.
+That’s really the heart of what works best when it comes to detecting these types of attacks:
+Asset management: Know what’s installed and where. Know who owns what assets and what high-privileged accounts are for.
+Behavioral baselining: Understand what “normal” looks like.
+Continuous monitoring: Configure detections to catch known TTPs and subtle deviations from baselines.
+Threat intel alignment: Use current trends like the DonPAPI surge to inform what you log and watch for. Talos’ blog and IR reports are great resources to keep up with industry trends.
+Bottom line
+Whether it’s PsExec, DonPAPI or TeamViewer, attackers are increasingly hiding in plain sight, using the same tools IT and security teams rely on for daily operations.
+Detecting malicious use of legitimate tools isn’t just about recognizing what’s running. It’s about asking why it’s running.
+Sometimes, the only difference between a routine operation and a breach is the analyst who stopped to ask: “Why was that tool running at 2:13 a.m.?”
+
+
+
+
+
+
+
+
+Share this post
+
+Microsoft Patch Tuesday for June 2025 — Snort rules and prominent vulnerabilities
+
+
+
+
+
+
+By 
+
+
+Chetan Raghuprasad
+
+
+
+
+
+
+
+            Tuesday, June 10, 2025 17:45
+        
+
+
+
+
+
+                                Patch Tuesday
+                            
+
+
+
+
+
+
+
+
+
+
+Update 6/12/2025: Microsoft released an additional CVE (
+CVE-2025-32717
+). Details and SIDs have been reflected to include this additional vulnerability.
+Microsoft has released its monthly security update for June 2025, which includes 66 vulnerabilities affecting a range of products, including 10 that Microsoft marked as “critical.” 
+In this month's release, none of the included vulnerabilities have been observed by Microsoft being actively exploited in the wild. Out of eleven "critical" entries, nine are remote code execution (RCE) vulnerabilities in Microsoft Windows services and applications including Microsoft Windows Remote Desktop Service, Windows Schannel (Secure Channel), KDC Proxy service, Microsoft Office, Word and SharePoint server. There are two elevation of privilege vulnerabilities affecting Windows NetLogon and Power Automate. 
+CVE-2025-32710
+ is the RCE vulnerability in Windows Remote Desktop Services and is given CVSS 3.1 score of 8.1. Successful exploitation of this vulnerability requires an attacker to win a race condition. An attacker could successfully exploit this vulnerability by attempting to connect to a system with the Remote Desktop Gateway role, triggering the race condition to a use-after-free scenario, and then leveraging this to execute arbitrary code. Microsoft has assessed that the attack complexity is “high,” and exploitation is "less likely." 
+CVE-2025-29828
+ is an RCE vulnerability in Windows Schannel (Secure Channel), a security support provider (SSP) in the Windows operating system that implements Secure Sockets layer (SSL) and Transport Layer Security (TLS) Protocols. It is part of the Security Support Provider Interface (SSPI) and is used to secure network communications. Microsoft noted that a missing release of memory by Windows Cryptographic Services could trigger this vulnerability, allowing an unauthorized attacker to execute code over a network. An attacker can exploit this vulnerability through the malicious use of fragmented ClientHello messages to a target server that accepts TLS connections. Microsoft has assessed that the attack complexity is “high”, and exploitation is "less likely".  
+CVE-2025-33071
+ is the RCE vulnerability in Windows KDC Proxy Service (KPSSVC) given CVSS 3.1 score of 8.1. To successfully exploit this vulnerability, an unauthenticated attacker could use a specially crafted application to leverage a cryptographic protocol vulnerability in Kerberos Key Distribution Center Proxy Service to perform remote code execution against the target. Microsoft has noted that this vulnerability only affects Windows servers that are configured as a Kerberos key Distribution Center (KDC) Proxy Protocol server, and Domain controllers are not affected. Microsoft has assessed that the attack complexity is “high”, and exploitation is "more likely".  
+CVE-2025-47172
+ is the RCE vulnerability in Microsoft SharePoint server given CVSS 3.1 score of 8.8. Microsoft noted that this vulnerability in Microsoft Office SharePoint is due to improper neutralization of special elements used in a SQL command which would allow an authorized attacker to execute code over a network. To exploit this vulnerability an authenticated attacker in a network-based attack, with a minimum of Site Member permission, could execute arbitrary code remotely on the SharePoint server. Microsoft has assessed that the attack complexity is “low,” and exploitation is “less likely." 
+CVE-2025-47162
+, 
+CVE-2025-47164
+, 
+CVE-2025-47167
+ and 
+CVE-2025-47953
+ are RCE vulnerabilities in Microsoft Office. The vulnerabilities 
+CVE-2025-47164
+ and 
+CVE-2025-47953
+ are "use after free” (UAF) vulnerabilities that occur when Microsoft Office tries to access memory that has already been freed. 
+CVE-2025-47162
+ is a heap-based buffer overflow in Microsoft Office and the 
+CVE-2025-47167
+ is a "type confusion" vulnerability which is triggered when Microsoft Office interprets a block of memory as the wrong data type. An unauthorized attacker exploits these vulnerabilities and executes arbitrary code on the victim's machine. Microsoft has assessed that for 
+CVE-2025-47162
+, 
+CVE-2025-47164
+ and 
+CVE-2025-47167
+, the attack complexity is "low," and exploitation is "more likely." For 
+CVE-2025-47953
+, the attack complexity is "low," and exploitation is "less likely."  
+CVE-2025-32717
+ is the RCE vulnerability in Microsoft Word given CVSS 3.1 score of 8.4. This vulnerability is triggered when Microsoft Word writes more data to a memory buffer located on the memory heap than it can hold — a heap-based buffer overflow which could allow an unauthorized attacker to execute arbitrary code. Microsoft has assessed that the attack complexity is “low,” and exploitation is “more likely.”
+Microsoft listed two critical elevations of privilege vulnerabilities. 
+CVE-2025-33070
+ is an elevation of privilege critical vulnerability in Windows Netlogon. An attacker could exploit the vulnerability by leveraging an authentication bypass in the Windows Netlogon service using uninitialized resources. An attacker, by successfully exploiting this vulnerability, could gain domain administrator privileges. Microsoft has assessed that the attack complexity is “high,” and exploitation is “more likely."  
+Microsoft noted that the 
+CVE-2025-47966
+ is a critical elevation of privilege vulnerability in Power Automate in the Windows OS. Power Automate is a Microsoft tool for automating repetitive tasks and business processes across different applications and services. This vulnerability in Power Automate exposed sensitive information to an unauthorized actor, allowing privilege escalation over a network. Microsoft has reported that this vulnerability with CVSS 3.1 base score of 9.8 has been fully mitigated and no further action is required by the users.  
+Talos would also like to highlight the following "important" vulnerabilities as Microsoft has determined that exploitation is "more likely:" 
+CVE-2025-32713
+ - Windows Common Log File System Driver Elevation of Privilege Vulnerability. 
+CVE-2025-32714
+ - Windows Installer Elevation of Privilege Vulnerability. 
+CVE-2025-47962
+ - Windows SDK Elevation of Privilege Vulnerability. 
+A complete list of all the other vulnerabilities Microsoft disclosed this month is available on its 
+update page
+.  
+In response to these vulnerability disclosures, Talos is releasing a new Snort ruleset that detects attempts to exploit some of them. Please note that additional rules may be released at a future date, and current rules are subject to change pending additional information. Cisco Security Firewall customers should use the latest update to their ruleset by updating their SRU. Open-source Snort Subscriber Ruleset customers can stay up to date by downloading the latest rule pack available for purchase on 
+Snort.org
+. 
+The rules included in this release that protect against the exploitation of many of these vulnerabilities are 55802, 56290, 65030-65043, 65049-65050. There are also these Snort 3 rules: 301220, 301250-301256.  
+
+
+
+
+
+
+
+
+Share this post
+
+Know thyself, know thy environment
+
+
+
+
+
+
+By 
+
+
+William Largent
+
+
+
+
+
+
+
+            Thursday, June 12, 2025 14:01
+        
+
+
+
+
+
+                            Threat Source newsletter
+                        
+
+
+
+
+
+
+
+
+
+
+Welcome to this week’s edition of the Threat Source newsletter. 
+This week, I'm coming to you from Cisco Live in San Diego where I've just talked to a room that some of you may have been in, so writing this feels a bit surreal. It's really hard to try and write a cogent newsletter with all that's happening in the world, some directly outside my door. To purposefully butcher Charles Dickens, "It was the worst of times, it was the even worse times." Nevertheless, I'm persisting.  
+I've had great conversations with so many smart people this week, but I was reminded once again that the most important tool you can leverage in protecting and securing your environment is knowing your environment and knowing yourself.  
+Knowing your environment can and should be tooled and processed so that it can be repeatable. Continuing to know your environment requires constant vigilance and effort. Knowing yourself requires a level of introspection that is hard — and honestly, sometimes I just lift the rug and sweep my issues under it when I can't tackle that negativity.  
+I'll give you an excellent example: every single thing I write would get flagged as AI. Everything. Why? I use an em dash (“—”) for roughly every four words I write — sometimes more, if I let it fly. It's clear that I could never go back to school successfully, despite the comedy gold that it would produce. For those of you old enough to remember “Back to School” with Rodney Dangerfield, I think you can imagine. I don't even want to talk about my kludgy code. Sure, it runs, but at what cost? 
+So my advice? Do as I say, not as I do. Learn everything about your environment in a repeatable way, with a clear and documented process. Then analyze your own weaknesses in your work — let's not try to make miracles happen — and identify chances for you to learn, fill the gaps in your skill set and then do it all over again. The bad guys are really good at learning your environment; make it as hard for them as you can. 
+The one big thing 
+Cisco Talos recently disclosed 
+several vulnerabilities across various software
+, including catdoc, Parallel, NVIDIA and High-Logic FontCreator. While most vulnerabilities were patched by their respective vendors, catdoc posed an exception as the vendor was unreachable, prompting Talos to provide patches directly.
+Why do I care? 
+These vulnerabilities highlight risks in widely used software, potentially exposing systems to attacks such as privilege escalation, memory corruption and data leaks. Understanding these risks is crucial to protect your systems. 
+So now what? 
+If you use these programs, update them immediately with the latest patches to protect yourself.  If you're on a security team, grab the latest Snort rules to detect possible exploits and keep an eye out for suspicious activity.  And if you're a developer, take notes from these vulnerabilities to strengthen your own code and avoid similar pitfalls in your projects. Security is everyone’s job!
+Top security headlines of the week 
+NHS in England calls for blood donors after ransomware attack
+The UK’s National Health Service (NHS) is calling for one million donors after a Qilin ransomware attack last summer caused a severe shortage of O-negative blood. (
+Cybernews
+) 
+Let them eat junk food: Major organic supplier to Whole Foods, Walmart, hit by cyberattack
+North American grocery wholesaler United Natural Foods told regulators that a cyber incident temporarily disrupted operations, including its ability to fulfill customer orders. (
+The Register
+) 
+Google fixes bug that could reveal users’ private phone numbers
+ 
+A security researcher has discovered a bug that could be exploited to reveal the private recovery phone number of almost any Google account without alerting its owner, potentially exposing users to privacy and security risks. (
+TechCrunch
+) 
+SinoTrack GPS Devices Vulnerable to Remote Vehicle Control via Default Passwords
+ 
+Two security vulnerabilities have been disclosed in SinoTrack GPS devices that could be exploited to control certain remote functions on connected vehicles and even track their locations. (
+T
+he Hacker News
+)
+Can’t get enough Talos? 
+Microsoft Patch Tuesday for June 2025
+ 
+Microsoft has released its monthly security update, which includes 66 vulnerabilities affecting a range of products, including 10 that Microsoft marked as “critical.” 
+Read the 
+blog
+ here
+.
+PathWiper targeting Ukrainian critical infrastructure
+ 
+Cisco Talos observed a destructive attack on a critical infrastructure entity within Ukraine, using a previously unknown wiper we are calling “PathWiper.” 
+Learn more.
+Upcoming events where you can find Talos 
+REcon
+ (June 27 – 29) Montreal, Canada 
+NIRMA
+ (July 28 – 30) St. Augustine, FL 
+Black Hat USA
+ (Aug. 2 – 7) Las Vegas, NV 
+Most prevalent malware files from Talos telemetry over the past week 
+SHA 256: 9f1f11a708d393e0a4109ae189bc64f1f3e312653dcf317a2bd406f18ffcc507
+ 
+MD5: 2915b3f8b703eb744fc54c81f4a9c67f 
+VirusTotal: 
+https://www.virustotal.com/gui/file/9f1f11a708d393e0a4109ae189bc64f1f3e312653dcf317a2bd406f18ffcc507
+Typical Filename: VID001.exe 
+Claimed Product: N/A 
+Detection Name: Win.Worm.Coinminer::1201 
+SHA 256: 5616b94f1a40b49096e2f8f78d646891b45c649473a5b67b8beddac46ad398e1
+ 
+MD5: 3e10a74a7613d1cae4b9749d7ec93515 
+VirusTotal: 
+https://www.virustotal.com/gui/file/5616b94f1a40b49096e2f8f78d646891b45c649473a5b67b8beddac46ad398e1
+Typical Filename: IMG001.exe 
+Claimed Product: N/A 
+Detection Name: Win.Dropper.Coinminer::1201 
+SHA 256: c67b03c0a91eaefffd2f2c79b5c26a2648b8d3c19a22cadf35453455ff08ead0
+ 
+MD5: 8c69830a50fb85d8a794fa46643493b2  
+VirusTotal: 
+https://www.virustotal.com/gui/file/c67b03c0a91eaefffd2f2c79b5c26a2648b8d3c19a22cadf35453455ff08ead0
+Typical Filename: AAct.exe  
+Claimed Product: N/A  
+Detection Name: PUA.Win.Dropper.Generic::1201 
+SHA 256: a31f222fc283227f5e7988d1ad9c0aecd66d58bb7b4d8518ae23e110308dbf91  
+ 
+MD5: 7bdbd180c081fa63ca94f9c22c457376   
+VirusTotal: 
+https://www.virustotal.com/gui/file/a31f222fc283227f5e7988d1ad9c0aecd66d58bb7b4d8518ae23e110308dbf91/details
+  
+Typical Filename: IMG001.exe  
+Detection Name: Simple_Custom_Detection   
+SHA256 275A021BBFB6489E54D471899F7DB9D1663FC695EC2FE2A2C4538AABF651FD0F
+ 
+MD5: 44d88612fea8a8f36de82e1278abb02f 
+VirusTotal: 
+https://www.virustotal.com/gui/file/275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f/detection
+Typical Filename: eicar.com-42987 
+Detection Name: eicarTestFile 
+
+
+
+
+
+
+
+
+Share this post
+
+catdoc zero-day, NVIDIA, High-Logic FontCreator and Parallel vulnerabilities
+
+
+
+
+
+
+By 
+
+
+Kri Dontje
+
+
+
+
+
+
+
+            Wednesday, June 11, 2025 09:47
+        
+
+
+
+
+
+                                Vulnerability Roundup
+                            
+
+
+
+
+
+
+
+
+
+
+Cisco Talos’ Vulnerability Discovery & Research team recently disclosed three zero-day vulnerabilities in catdoc, as well as vulnerabilities in Parallel, NVIDIA and High-Logic FontCreator 15. 
+The vulnerabilities mentioned in this blog post have been patched by their respective vendors, in adherence to 
+Cisco’s third-party vulnerability disclosure policy
+, except in the case of the catdoc zero-day vulnerabilities, which were patched by our researcher (
+patches found in this repository
+). This is an unusual case, because the vendor could not be reached to fix these high-risk bugs; our policy does not include fixing third-party vulnerabilities. 
+For Snort coverage that can detect the exploitation of these vulnerabilities, download the latest rule sets from 
+Snort.org
+, and our latest Vulnerability Advisories are always posted on 
+Talos Intelligence’s website
+.      
+catdoc zero-day vulnerabilities 
+Discovered by Ali Rizvi-Santiago of Cisco Talos.  
+  
+The catdoc program pulls plain text content from Microsoft Word, Excel, PowerPoint and Rich Text Format files. The vendor was unreachable, Debian will be merging our patches into their distribution. 
+https://github.com/Cisco-Talos/catdoc-talos-fixes/releases/tag/talos-fixes.2025-05
+TALOS-2024-2128
+ (CVE-2024-48877) is a memory corruption vulnerability in the Shared String Table Record Parser implementation in xls2csv utility version 0.95. A specially crafted malformed file can lead to a heap buffer overflow. An attacker can provide a malicious file to trigger this vulnerability. 
+TALOS-2024-2131
+ (CVE-2024-52035) is an integer overflow vulnerability which exists in the OLE Document File Allocation Table Parser functionality of catdoc 0.95., and 
+TALOS-2024-2132
+ (CVE-2024-54028) is an integer underflow vulnerability in the OLE Document DIFAT Parser functionality. A specially crafted malformed file can lead to heap-based memory corruption for either vulnerability, and an attacker can provide a malicious file as a trigger. 
+Parallel integer overflow vulnerability  
+Discovered by KPC of Cisco Talos. 
+   
+Parallels is a desktop emulator for Mac computers that enables virtual Windows applications. 
+TALOS-2025-2160
+ (CVE-2025-31359) is a directory traversal vulnerability exists in the PVMP package unpacking functionality of Parallels Desktop for Mac version 20.2.2 (55879). This vulnerability can be exploited by an attacker to write to arbitrary files, potentially leading to privilege escalation.
+There are three privilege escalation vulnerabilities in the virtual machine archive restoration functionality of Parallels Desktop for Mac version 20.1.1 (55740).
+TALOS-2024-2126
+ (CVE-2024-36486): When an archived virtual machine is restored, the prl_vmarchiver tool decompresses the file and writes the content back to its original location using root privileges. An attacker can exploit this process by using a hard link to write to an arbitrary file, potentially resulting in privilege escalation.
+TALOS-2024-2124
+ (CVE-2024-54189): When a snapshot of a virtual machine is taken, a root service writes to a file owned by a normal user. By using a hard link, an attacker can write to an arbitrary file, potentially leading to privilege escalation.
+TALOS-2024-2123
+ (CVE-2024-52561): When a snapshot of a virtual machine is deleted, a root service verifies and modifies the ownership of the snapshot files. By using a symlink, an attacker can change the ownership of files owned by root to a lower-privilege user, potentially leading to privilege escalation.
+NVIDIA integer overflow vulnerability  
+Discovered by Dimitrios Tatsis of Cisco Talos. 
+   
+NVIDIA cuobjdump is a command-line utility included in the NVIDIA CUDA Toolkit. Similar to the standard `objdump` utility, it parses CUDA executable files and displays information like PTX disassembly, section headers, relocations etc. 
+TALOS-2025-2151
+ (CVE-2025-23247) is an integer overflow in the ELF Section Parsing functionality of NVIDIA cuobjdump 12.8.55. A specially crafted fatbin file can lead to an out-of-bounds write. An attacker can provide a malicious file to trigger this vulnerability. 
+High-Logic out-of-bounds read vulnerability  
+Discovered by KPC of Cisco Talos. 
+   
+High-Logic FontCreator is a font editor for Windows & macOS. The program allows you to create, edit and export OpenType, TrueType and responsive variable fonts. 
+An out-of-bounds read vulnerability, 
+TALOS-2025-2157
+ (CVE-2025-20001), exists in High-Logic FontCreator 15.0.0.3015. A specially crafted font file can trigger this vulnerability which can lead to disclosure of sensitive information. An attacker needs to trick the user into opening the malicious file to trigger this vulnerability. 
+
+
+
+
+
+
+
+
+Share this post
+
+Everyone's on the cyber target list
+
+
+
+
+
+
+By 
+
+
+Martin Lee
+
+
+
+
+
+
+
+            Thursday, June 5, 2025 14:00
+        
+
+
+
+
+
+                            Threat Source newsletter
+                        
+
+
+
+
+
+
+
+
+
+
+Welcome to this week’s edition of the Threat Source newsletter. 
+I’ve discovered that being a rent guarantor for someone is an involved experience. While I’m glad that I can help out a loved one secure a better rental property, the process of verifying my identity and ability to cover any missed payments required handing over far more personal and financial data than I was comfortable with. 
+I asked the agent about their information security policies and cybersecurity posture. I was relieved to hear that they delete all the personal data within two weeks of processing, but I was concerned that the person dealing with my dossier didn’t think that they were at risk of a cyber attack. They believed that because they had a low online profile and their organisation was small, they didn’t present as a target. 
+Not wanting to jeopardise my position as a guarantor, I didn’t argue further beyond offering a few words of advice. The truth is that everyone is a target. Many criminals do not discriminate; they seek to compromise anyone and see how they can make money from a compromise once access is achieved. Sophisticated criminals research their targets and their wider ecosystem of suppliers and partners in depth to identify potential weak points. It only takes a moment’s inattention for anyone to fall for a phishing or social engineering scam. 
+Cybersecurity training needs to reinforce the fact that anyone can be a victim of a cyber attack. No matter how careful you might be, how insignificant you think that you might be, an attack can still catch you off guard. The good news is that by ensuring basic cyber hygiene, we can make a lot of progress towards preventing harm. 
+Impressing on users the need to install updates promptly, the importance of having end-point protection and using multi-factor authentication is not a panacea, but it is a basic foundation upon which more advanced protection can be built. 
+Good cybersecurity begins with an awareness of the threat, an acknowledgement that we are all at risk, and knowing the potential consequences. Nobody is too insignificant, too small or too well hidden to escape the risk of cyber attack. Suitable protection follows from reflecting on what is at risk and what could possibly go wrong.
+The one big thing 
+Talos has 
+uncovered a destructive attack
+ on Ukrainian critical infrastructure involving a new wiper malware, "PathWiper," deployed through a legitimate endpoint administration framework. Talos attributes this attack to a Russia-linked APT actor, underscoring the persistent threat to Ukraine's infrastructure amid the ongoing war. 
+Why do I care? 
+This attack highlights the sophisticated tactics of state-sponsored threat actors and the risks critical infrastructure entities face, which could have global implications for cybersecurity and geopolitical stability. 
+So now what? 
+Organizations, particularly those managing critical infrastructure, should strengthen their endpoint security, monitor for unusual administrative activity, and stay informed on evolving threats to mitigate potential risks.
+Top security headlines of the week
+New Chrome Zero-Day Actively Exploited; Google Issues Emergency Out-of-Band Patch
+ 
+The high-severity flaw is being tracked as CVE-2025-5419 (CVSS score: 8.8), and has been flagged as an out-of-bounds read and write vulnerability in the V8 JavaScript and WebAssembly engine. (
+The Hacker News
+) 
+Vanta bug exposed customers’ data to other customers
+ 
+Compliance company Vanta has confirmed that a bug exposed the private data of some of its customers to other Vanta customers. The company told TechCrunch that the data exposure was a result of a product code change and not caused by an intrusion. (
+TechCrunch
+) 
+Data Breach Affects 38K UChicago Medicine Patients
+ 
+UChicago Medicine released a statement that the data of 38K patients may have been exposed by a third-party debt collector's system breach. The exposed data may include SSNs, addresses, dates of birth, medical information, and financial account information. (
+UPI
+)
+Can’t get enough Talos? 
+Fake AI installers target businesses.
+ Catch up on the ransomware and malware threats Talos discovered circulating in the wild and masquerading as legit AI tool installers. 
+Read the blog
+ or 
+listen to our most recent Talos Takes
+ to hear Hazel and Chetan, the author, discuss the blog more in-depth.
+Talos at Cisco Live 2025
+. From sessions featuring a live IR tabletop session to learning how to outsmart identity attacks, there’s plenty of Talos to keep you going in San Diego next week. 
+Browse sessions
+ Talos is participating in, and we'll see you there!
+Upcoming events where you can find Talos 
+Cisco Live U.S.
+ (June 8 – 12) San Diego, CA 
+REcon
+ (June 27 – 29) Montreal, Canada 
+NIRMA
+ (July 28 – 30) St. Augustine, FL 
+Black Hat USA
+ (Aug. 2–  7) Las Vegas, NV
+Most prevalent malware files from Talos telemetry over the past week 
+SHA 256: a31f222fc283227f5e7988d1ad9c0aecd66d58bb7b4d8518ae23e110308dbf91  
+ 
+MD5: 7bdbd180c081fa63ca94f9c22c457376   
+VirusTotal: https://www.virustotal.com/gui/file/a31f222fc283227f5e7988d1ad9c0aecd66d58bb7b4d8518ae23e110308dbf91/details  
+Typical Filename: IMG001.exe  
+Detection Name: Simple_Custom_Detection 
+SHA 256:
+ 
+9f1f11a708d393e0a4109ae189bc64f1f3e312653dcf317a2bd406f18ffcc507
+ 
+MD5: 2915b3f8b703eb744fc54c81f4a9c67f 
+VirusTotal: https://www.virustotal.com/gui/file/9f1f11a708d393e0a4109ae189bc64f1f3e312653dcf317a2bd406f18ffcc507 
+Typical Filename: VID001.exe 
+Detection Name: Simple_Custom_Detection 
+SHA 256: c67b03c0a91eaefffd2f2c79b5c26a2648b8d3c19a22cadf35453455ff08ead0
+ 
+MD5: 8c69830a50fb85d8a794fa46643493b2  
+Typical Filename: AAct.exe  
+Claimed Product: N/A  
+Detection Name: PUA.Win.Dropper.Generic::1201 
+
+
+
+
+
+
+
+
+Share this post
+
+Newly identified wiper malware “PathWiper” targets critical infrastructure in Ukraine
+
+
+
+
+
+
+By 
+
+
+Jacob Finn
+, 
+                
+Dmytro Korzhevin
+, 
+                
+Asheer Malhotra
+
+
+
+
+
+
+
+            Thursday, June 5, 2025 06:00
+        
+
+
+
+
+
+                                APT
+                            
+
+
+
+                                Ukraine
+                            
+
+
+
+                                wiper
+                            
+
+
+
+                                Threat Advisory
+                            
+
+
+
+
+
+
+
+
+
+
+Cisco Talos observed a destructive attack on a critical infrastructure entity within Ukraine, using a previously unknown wiper we are calling “PathWiper”. 
+The attack was instrumented via a legitimate endpoint administration framework, indicating that the attackers likely had access to the administrative console, that was then used to issue malicious commands and deploy PathWiper across connected endpoints. 
+Talos attributes this disruptive attack and the associated wiper to a Russia-nexus advanced persistent threat (APT) actor. Our assessment is made with high confidence based on tactics, techniques and procedures (TTPs) and wiper capabilities overlapping with destructive malware previously seen targeting Ukrainian entities.  
+The continued evolution of wiper malware variants highlights the ongoing threat to Ukrainian critical infrastructure despite the longevity of the Russia-Ukraine war. 
+Proliferation of PathWiper 
+Any commands issued by the administrative tool’s console were received by its client running on the endpoints. The client then executed the command as a batch (BAT) file, with the command line partially resembling that of 
+Impacket
+ command executions, though such commands do not necessarily indicate the presence of Impacket in an environment.
+The BAT file consisted of a command to execute a malicious VBScript file called ‘uacinstall.vbs’, also pushed to the endpoint by the administrative console: 
+
+
+
+
+
+C:\WINDOWS\System32\WScript.exe C:\WINDOWS\TEMP\uacinstall.vbs
+
+
+
+
+
+Upon execution, the VBScript wrote the PathWiper executable, named ‘sha256sum.exe’, to disk and executed it: 
+
+
+
+
+
+C:\WINDOWS\TEMP\sha256sum.exe 
+
+
+
+
+
+Throughout the course of the attack, filenames and actions used were intended to mimic those deployed by the administrative utility’s console, indicating that the attackers had prior knowledge of the console and possibly its functionality within the victim enterprise’s environment.
+PathWiper capabilities 
+On execution, PathWiper replaces the contents of artifacts related to the file system with random data generated on the fly. It first gathers a list of connected storage media on the endpoint, including: 
+Physical drive names 
+Volume names and paths 
+Network shared and unshared (removed) drive paths 
+Although most storage devices and volumes are discovered programmatically (via APIs), the wiper also queries ‘HKEY_USERS\Network\<drive_letter>| RemovePath’ to obtain the path of shared network drives for destruction. 
+Once all the storage media information has been collected, PathWiper creates one thread per drive and volume for every path recorded and overwrites artifacts with randomly generated bytes. The wiper reads multiple file systems attributes, such as the following from New Technology File System (NTFS). PathWiper then overwrites the contents/data related to these artifacts directly on disk with random data: 
+MBR 
+$MFT 
+$MFTMirr 
+$LogFile 
+$Boot 
+$Bitmap 
+$TxfLog 
+$Tops 
+$AttrDef 
+Before overwriting the contents of the artifacts, the wiper also attempts to dismount volumes using the ‘FSCTL_DISMOUNT_VOLUME IOCTL’ to the MountPointManager device object. PathWiper also destroys files on disk by overwriting them with randomized bytes. 
+PathWiper’s mechanisms are somewhat semantically similar to another wiper family, 
+HermeticWiper
+,
+ previously seen targeting Ukrainian entities in 2022. HermeticWiper, also known as FoxBlade or NEARMISS, is attributed to Russia’s Sandworm group in third-party reporting with 
+medium
+ to 
+high
+ 
+confidence
+. Both wipers attempt to corrupt the master boot record (MBR) and NTFS-related artifacts.  
+ A significant difference between HermeticWiper and PathWiper is the corruption mechanisms used against recorded drives and volumes. PathWiper programmatically identifies all connected (including dismounted) drives and volumes on the system, identifies volume labels for verification and documents valid records. This differs from HermeticWiper's simple process of enumerating physical drives from 0 to 100 and attempting to corrupt them. 
+Coverage 
+Cisco Secure Endpoint
+ (formerly AMP for Endpoints) is ideally suited to prevent the execution of the malware detailed in this post. Try Secure Endpoint for free 
+here.
+ 
+Cisco Secure Email
+ (formerly Cisco Email Security) can block malicious emails sent by threat actors as part of their campaign. You can try Secure Email for free 
+here
+. 
+Cisco Secure Firewall
+ (formerly Next-Generation Firewall and Firepower NGFW) appliances such as 
+Threat Defense Virtual
+, 
+Adaptive Security Appliance
+ and 
+Meraki MX
+ can detect malicious activity associated with this threat. 
+Cisco Secure Network/Cloud Analytics
+ (Stealthwatch/Stealthwatch Cloud) analyzes network traffic automatically and alerts users of potentially unwanted activity on every connected device. 
+Cisco Secure Malware Analytics
+ (Threat Grid) identifies malicious binaries and builds protection into all Cisco Secure products. 
+Cisco Secure Access
+ is a modern cloud-delivered Security Service Edge (SSE) built on Zero Trust principles.  Secure Access provides seamless transparent and secure access to the internet, cloud services or private application no matter where your users work.  Please contact your Cisco account representative or authorized partner if you are interested in a free trial of Cisco Secure Access. 
+Umbrella
+, Cisco’s secure internet gateway (SIG), blocks users from connecting to malicious domains, IPs and URLs, whether users are on or off the corporate network.  
+Cisco Secure Web Appliance
+ (formerly Web Security Appliance) automatically blocks potentially dangerous sites and tests suspicious sites before users access them.  
+Additional protections with context to your specific environment and threat data are available from the 
+Firewall Management Center
+. 
+Cisco Duo
+ provides multi-factor authentication for users to ensure only those authorized are accessing your network.  
+Open-source Snort Subscriber Rule Set customers can stay up to date by downloading the latest rule pack available for purchase on 
+Snort.org
+. 
+Snort 2 rules: 64742, 64743 
+Snort 3 rules: 301174
+Indicators of compromise (IOCs) 
+
+
+
+
+
+7C792A2B005B240D30A6E22EF98B991744856F9AB55C74DF220F32FE0D00B6B3
+
+
+
+
+
+
+
+
+
+
+
+Share this post
+
+A new author has appeared
+
+
+
+
+
+
+By 
+
+
+Amy Ciminnisi
+
+
+
+
+
+
+
+            Thursday, May 29, 2025 14:00
+        
+
+
+
+
+
+                            Threat Source newsletter
+                        
+
+
+
+
+
+
+
+
+
+
+Welcome to this week’s edition of the Threat Source newsletter. 
+In the words of Game Changer host Sam Reich, “And your host, me! I’ve been here the whole time!”  
+Okay, maybe it’s not the whole time, but for the past three months, I've been settling into my role here at Cisco Talos. Editing blogs, writing and publishing social media posts, and organizing this newsletter every week — I've been working behind the scenes to ensure everything runs smoothly and delivers the most helpful information to the cybersecurity community. 
+I often get raised eyebrows when I mention that, prior to my last job as a technical writer, I had never worked in STEM. I don't blame them, because how could someone who had never opened Terminal (and admittedly, up until last month sometimes forgot what it was called) end up with a job offer from Talos? 
+My college degree is in anthropology, or the study of humans and culture, past and present. Though my niche research interest was/is Malaysian culture, LGBTQ+ history, and politics (even getting a research grant to travel to peninsular Malaysia for a month), my first career out of college was fundraising for a homeless services nonprofit in Arlington, Virginia. After I moved to another state, I held a content writing position at a startup, where I wrote fundraising letters and emails for a portfolio of over 200 nonprofits.
+Learning the four-string 
+Malaysian sape’
+. 
+While I felt invested in these organizations' missions, I began to feel understimulated. I craved a career that would build on my experiences and skills while giving me the chance to learn and grow in new, exciting ways. While searching for new jobs on LinkedIn, I happened upon a nearby physical layer encryption startup that was seeking a technical writer. I had no clue what the physical layer even was, so I was grateful when they took a chance on hiring me. I found that my background in anthropological research, as well as my ability to adapt content for a lot of different audiences, became a huge asset in technical writing. 
+I’ve always said that if I could magically be paid to go to school forever, I would. Technical writing (and its cousins, like my current position) is as close as I can get! After I joined Talos, I found that people here are incredibly kind and very patient. Like Jon Munshaw, the person who held this role before me, my favorite question to Talos researchers is “Can you explain this to me like I’m your grandmother?” Not only does it help me grasp the concepts they're sharing, but it also helps me find the clearest way to communicate them. 
+Talosians are brilliant people, and I’m only human, so it’s easy to feel like you don't belong when you don’t have a STEM background. In a recent moment of doubt, I remembered that Joe had published a 
+newsletter introduction about imposter syndrome
+ two days after I started at Talos. One line stuck out to me: “You are where you are because others saw value in your work.” 
+As I took in the sentence, I realized that it was entirely true. If there's one thing that I’ve learned over the past few months, it’s that everyone you meet has something to teach and everyone has something to learn. Our collective knowledge and experience are gifts we share with one another. I hope that the content I edit and produce will bring value to you. 
+So what kind of content will I bring to this newsletter? You can expect intros that aren't just informative, but also relatable and engaging. They may even remind you of your beginnings in cybersecurity. I'll make complex topics feel accessible, highlight the human side of cybersecurity, and share insights that help the community grow stronger. 
+At the end of the day, our work isn't just about threats, but about the humans working tirelessly to defend against them.
+The one big thing 
+Talos has identified 
+threats disguised as legitimate AI solution installers
+, including ransomware like CyberLock and Lucky_Gh0$t, and a destructive malware called Numero. These threats highlight how malicious actors are leveraging the rise of AI to distribute harmful software. 
+Why do I care? 
+Cybercriminals are targeting the trust and excitement around AI tools to deliver malware, which could affect anyone looking to adopt AI for personal or business use, putting their systems and data at risk. Understanding these threats helps you stay vigilant and avoid falling victim to such deceptive tactics. 
+So now what? 
+Snort SIDs and ClamAV detections are available at the bottom of the 
+blog post
+. Otherwise, always verify the source of any AI tools or software before downloading, use trusted cybersecurity solutions to protect your systems, and stay informed about emerging threats by keeping up with updates from reliable sources like Cisco Talos.
+Top security headlines of the week 
+MathWorks, Creator of MATLAB, Confirms Ransomware Attack
+ 
+The attack dirsupted MathWorks' systems and online applications, but it remains unclear which ransomware group targeted the software company and whether they stole any data. (
+DarkReading
+) 
+Deepfakes, Scams, and the Age of Paranoia
+ 
+This hit home, both as a jobseeker within the past year and a young(er) person who’s worried about her parents’ security. I may be able to parse AI portraits with six fingers and hair phasing through their clothes, but have you ever seen a convincing deepfake? Phew. (
+Wired
+) 
+Companies Warned of Commvault Vulnerability Exploitation
+ 
+CISA says that the ongoing exploitation of a Commvault vulnerability that was targeted as a zero-day is likely part of a broader campaign against software-as-a-service (SaaS) solutions. (
+SecurityWeek
+) 
+US student agrees to plead guilty to hack affecting tens of millions of students
+A Massachusetts student has agreed to plead guilty to federal charges relating to hacking and extorting one of the largest U.S. education tech companies. PI included names, addresses, phone numbers, Social Security numbers, medical information, and school grades. (
+TechCrunch
+)
+Can’t get enough Talos? 
+UAT-6382 exploits Cityworks zero-day vulnerability to deliver malware
+Talos has found intrusions in enterprise networks of local governing bodies in the United States (U.S.), beginning January 2025 when initial exploitation first took place. 
+Read the blog here.
+The day I found an APT group in the most unlikely place
+ 
+In this Dark Reading Confidential episode, Talosian Vitor Ventura shares stories about the tricks he used to track down APTs, and the surprises discovered along the way. 
+Listen to the podcast here.
+Upcoming events where you can find Talos 
+Cisco Live U.S.
+ (June 8 – 12) San Diego, CA 
+NIRMA
+ (July 28 – 30) St. Augustine, FL 
+Black Hat USA
+ (Aug. 2 - 7) Las Vegas, NV
+Most prevalent malware files from Talos telemetry over the past week 
+SHA 256: 9f1f11a708d393e0a4109ae189bc64f1f3e312653dcf317a2bd406f18ffcc507
+ 
+MD5: 2915b3f8b703eb744fc54c81f4a9c67f 
+VirusTotal: 
+https://www.virustotal.com/gui/file/9f1f11a708d393e0a4109ae189bc64f1f3e312653dcf317a2bd406f18ffcc507
+  
+Typical Filename: VID001.exe 
+Claimed Product: N/A 
+Detection Name: Win.Worm.Coinminer::1201 
+SHA 256: 59f1e69b68de4839c65b6e6d39ac7a272e2611ec1ed1bf73a4f455e2ca20eeaa
+ 
+MD5: df11b3105df8d7c70e7b501e210e3cc3 
+VirusTotal: 
+https://www.virustotal.com/gui/file/59f1e69b68de4839c65b6e6d39ac7a272e2611ec1ed1bf73a4f455e2ca20eeaa
+ 
+Typical Filename: DOC001.exe 
+Claimed Product: N/A 
+Detection Name: Win.Worm.Coinminer::1201 
+SHA256:3294df8e416f72225ab1ccf0ed0390134604bc747d60c36fbb8270f96732e341
+ 
+MD5: b6bc3353a164b35f5b815fc1c429eaab 
+VirusTotal: 
+https://www.virustotal.com/gui/file/3294df8e416f72225ab1ccf0ed0390134604bc747d60c36fbb8270f96732e341
+ 
+Typical Filename: b6bc3353a164b35f5b815fc1c429eaab.msi 
+Claimed Product: n/a  
+Detection Name: Simple_Custom_Detection 
+SHA 256: a31f222fc283227f5e7988d1ad9c0aecd66d58bb7b4d8518ae23e110308dbf91  
+ 
+MD5: 7bdbd180c081fa63ca94f9c22c457376  
+VirusTotal: 
+https://www.virustotal.com/gui/file/a31f222fc283227f5e7988d1ad9c0aecd66d58bb7b4d8518ae23e110308dbf91
+ 
+Typical Filename: c0dwjdi6a.dll  
+Claimed Product: N/A   
+Detection Name: Trojan.GenericKD.33515991 
+
+
+
+
+
+
+
+
+Share this post
+
+import os
+
+with open("all_data.txt", "w", encoding="utf-8") as outfile:
+    for fname in os.listdir("raw_data"):
+        with open(f"raw_data/{fname}", "r", encoding="utf-8") as f:
+            outfile.write(f.read() + "\n\n")
+
+

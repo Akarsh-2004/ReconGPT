@@ -1,0 +1,105 @@
+Microsoft Patch Tuesday for June 2025 — Snort rules and prominent vulnerabilities
+
+
+
+
+
+
+By 
+
+
+Chetan Raghuprasad
+
+
+
+
+
+
+
+            Tuesday, June 10, 2025 17:45
+        
+
+
+
+
+
+                                Patch Tuesday
+                            
+
+
+
+
+
+
+
+
+
+
+Update 6/12/2025: Microsoft released an additional CVE (
+CVE-2025-32717
+). Details and SIDs have been reflected to include this additional vulnerability.
+Microsoft has released its monthly security update for June 2025, which includes 66 vulnerabilities affecting a range of products, including 10 that Microsoft marked as “critical.” 
+In this month's release, none of the included vulnerabilities have been observed by Microsoft being actively exploited in the wild. Out of eleven "critical" entries, nine are remote code execution (RCE) vulnerabilities in Microsoft Windows services and applications including Microsoft Windows Remote Desktop Service, Windows Schannel (Secure Channel), KDC Proxy service, Microsoft Office, Word and SharePoint server. There are two elevation of privilege vulnerabilities affecting Windows NetLogon and Power Automate. 
+CVE-2025-32710
+ is the RCE vulnerability in Windows Remote Desktop Services and is given CVSS 3.1 score of 8.1. Successful exploitation of this vulnerability requires an attacker to win a race condition. An attacker could successfully exploit this vulnerability by attempting to connect to a system with the Remote Desktop Gateway role, triggering the race condition to a use-after-free scenario, and then leveraging this to execute arbitrary code. Microsoft has assessed that the attack complexity is “high,” and exploitation is "less likely." 
+CVE-2025-29828
+ is an RCE vulnerability in Windows Schannel (Secure Channel), a security support provider (SSP) in the Windows operating system that implements Secure Sockets layer (SSL) and Transport Layer Security (TLS) Protocols. It is part of the Security Support Provider Interface (SSPI) and is used to secure network communications. Microsoft noted that a missing release of memory by Windows Cryptographic Services could trigger this vulnerability, allowing an unauthorized attacker to execute code over a network. An attacker can exploit this vulnerability through the malicious use of fragmented ClientHello messages to a target server that accepts TLS connections. Microsoft has assessed that the attack complexity is “high”, and exploitation is "less likely".  
+CVE-2025-33071
+ is the RCE vulnerability in Windows KDC Proxy Service (KPSSVC) given CVSS 3.1 score of 8.1. To successfully exploit this vulnerability, an unauthenticated attacker could use a specially crafted application to leverage a cryptographic protocol vulnerability in Kerberos Key Distribution Center Proxy Service to perform remote code execution against the target. Microsoft has noted that this vulnerability only affects Windows servers that are configured as a Kerberos key Distribution Center (KDC) Proxy Protocol server, and Domain controllers are not affected. Microsoft has assessed that the attack complexity is “high”, and exploitation is "more likely".  
+CVE-2025-47172
+ is the RCE vulnerability in Microsoft SharePoint server given CVSS 3.1 score of 8.8. Microsoft noted that this vulnerability in Microsoft Office SharePoint is due to improper neutralization of special elements used in a SQL command which would allow an authorized attacker to execute code over a network. To exploit this vulnerability an authenticated attacker in a network-based attack, with a minimum of Site Member permission, could execute arbitrary code remotely on the SharePoint server. Microsoft has assessed that the attack complexity is “low,” and exploitation is “less likely." 
+CVE-2025-47162
+, 
+CVE-2025-47164
+, 
+CVE-2025-47167
+ and 
+CVE-2025-47953
+ are RCE vulnerabilities in Microsoft Office. The vulnerabilities 
+CVE-2025-47164
+ and 
+CVE-2025-47953
+ are "use after free” (UAF) vulnerabilities that occur when Microsoft Office tries to access memory that has already been freed. 
+CVE-2025-47162
+ is a heap-based buffer overflow in Microsoft Office and the 
+CVE-2025-47167
+ is a "type confusion" vulnerability which is triggered when Microsoft Office interprets a block of memory as the wrong data type. An unauthorized attacker exploits these vulnerabilities and executes arbitrary code on the victim's machine. Microsoft has assessed that for 
+CVE-2025-47162
+, 
+CVE-2025-47164
+ and 
+CVE-2025-47167
+, the attack complexity is "low," and exploitation is "more likely." For 
+CVE-2025-47953
+, the attack complexity is "low," and exploitation is "less likely."  
+CVE-2025-32717
+ is the RCE vulnerability in Microsoft Word given CVSS 3.1 score of 8.4. This vulnerability is triggered when Microsoft Word writes more data to a memory buffer located on the memory heap than it can hold — a heap-based buffer overflow which could allow an unauthorized attacker to execute arbitrary code. Microsoft has assessed that the attack complexity is “low,” and exploitation is “more likely.”
+Microsoft listed two critical elevations of privilege vulnerabilities. 
+CVE-2025-33070
+ is an elevation of privilege critical vulnerability in Windows Netlogon. An attacker could exploit the vulnerability by leveraging an authentication bypass in the Windows Netlogon service using uninitialized resources. An attacker, by successfully exploiting this vulnerability, could gain domain administrator privileges. Microsoft has assessed that the attack complexity is “high,” and exploitation is “more likely."  
+Microsoft noted that the 
+CVE-2025-47966
+ is a critical elevation of privilege vulnerability in Power Automate in the Windows OS. Power Automate is a Microsoft tool for automating repetitive tasks and business processes across different applications and services. This vulnerability in Power Automate exposed sensitive information to an unauthorized actor, allowing privilege escalation over a network. Microsoft has reported that this vulnerability with CVSS 3.1 base score of 9.8 has been fully mitigated and no further action is required by the users.  
+Talos would also like to highlight the following "important" vulnerabilities as Microsoft has determined that exploitation is "more likely:" 
+CVE-2025-32713
+ - Windows Common Log File System Driver Elevation of Privilege Vulnerability. 
+CVE-2025-32714
+ - Windows Installer Elevation of Privilege Vulnerability. 
+CVE-2025-47962
+ - Windows SDK Elevation of Privilege Vulnerability. 
+A complete list of all the other vulnerabilities Microsoft disclosed this month is available on its 
+update page
+.  
+In response to these vulnerability disclosures, Talos is releasing a new Snort ruleset that detects attempts to exploit some of them. Please note that additional rules may be released at a future date, and current rules are subject to change pending additional information. Cisco Security Firewall customers should use the latest update to their ruleset by updating their SRU. Open-source Snort Subscriber Ruleset customers can stay up to date by downloading the latest rule pack available for purchase on 
+Snort.org
+. 
+The rules included in this release that protect against the exploitation of many of these vulnerabilities are 55802, 56290, 65030-65043, 65049-65050. There are also these Snort 3 rules: 301220, 301250-301256.  
+
+
+
+
+
+
+
+
+Share this post

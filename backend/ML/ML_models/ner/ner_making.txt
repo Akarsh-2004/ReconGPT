@@ -1,0 +1,32 @@
+Building tokenizer + vocab
+Labeling BIO-tagged NER dataset
+Implementing Transformer encoder (no BERT)
+Training on custom NER labels
+Evaluation and deploy
+
+
+
+https://www.datacamp.com/blog/what-is-named-entity-recognition-ner
+
+
+
+
+| Website            | Scraping Method                              |
+| ------------------ | -------------------------------------------- |
+| ✅ MITRE ATT\&CK    | Static HTML (`requests + BeautifulSoup`)     |
+| ✅ CISA Alerts      | RSS Feed + HTML pages                        |
+| ✅ TheHackerNews    | `newspaper3k` or HTML parsing                |
+| ✅ AlienVault OTX   | Needs login – fallback to public pulses only |
+| ✅ Cisco Talos Blog | Blog HTML pages (`requests + BeautifulSoup`) |
+
+
+Input text → Tokenizer → IDs → Embedding
+→ Positional Encoding
+→ N × Transformer Encoder Blocks
+→ Linear layer (output_dim = # of NER tags)
+→ Softmax
+→ Loss (CrossEntropy per token)
+
+
+
+

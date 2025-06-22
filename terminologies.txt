@@ -1,0 +1,5 @@
+NER :- named entity recognition  is a subtask of information extraction that seeks to locate and classify named entities mentioned in unstructured text into pre-defined categories 
+Transformers: is a library of pretrained NLP, computer vision, audio and mutimodel models for inference
+spaCy: spaCy is an open-source software library for advanced natural language processing, written in the programming languages Python and Cython.
+
+

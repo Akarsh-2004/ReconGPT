@@ -1,0 +1,139 @@
+Know thyself, know thy environment
+
+
+
+
+
+
+By 
+
+
+William Largent
+
+
+
+
+
+
+
+            Thursday, June 12, 2025 14:01
+        
+
+
+
+
+
+                            Threat Source newsletter
+                        
+
+
+
+
+
+
+
+
+
+
+Welcome to this week’s edition of the Threat Source newsletter. 
+This week, I'm coming to you from Cisco Live in San Diego where I've just talked to a room that some of you may have been in, so writing this feels a bit surreal. It's really hard to try and write a cogent newsletter with all that's happening in the world, some directly outside my door. To purposefully butcher Charles Dickens, "It was the worst of times, it was the even worse times." Nevertheless, I'm persisting.  
+I've had great conversations with so many smart people this week, but I was reminded once again that the most important tool you can leverage in protecting and securing your environment is knowing your environment and knowing yourself.  
+Knowing your environment can and should be tooled and processed so that it can be repeatable. Continuing to know your environment requires constant vigilance and effort. Knowing yourself requires a level of introspection that is hard — and honestly, sometimes I just lift the rug and sweep my issues under it when I can't tackle that negativity.  
+I'll give you an excellent example: every single thing I write would get flagged as AI. Everything. Why? I use an em dash (“—”) for roughly every four words I write — sometimes more, if I let it fly. It's clear that I could never go back to school successfully, despite the comedy gold that it would produce. For those of you old enough to remember “Back to School” with Rodney Dangerfield, I think you can imagine. I don't even want to talk about my kludgy code. Sure, it runs, but at what cost? 
+So my advice? Do as I say, not as I do. Learn everything about your environment in a repeatable way, with a clear and documented process. Then analyze your own weaknesses in your work — let's not try to make miracles happen — and identify chances for you to learn, fill the gaps in your skill set and then do it all over again. The bad guys are really good at learning your environment; make it as hard for them as you can. 
+The one big thing 
+Cisco Talos recently disclosed 
+several vulnerabilities across various software
+, including catdoc, Parallel, NVIDIA and High-Logic FontCreator. While most vulnerabilities were patched by their respective vendors, catdoc posed an exception as the vendor was unreachable, prompting Talos to provide patches directly.
+Why do I care? 
+These vulnerabilities highlight risks in widely used software, potentially exposing systems to attacks such as privilege escalation, memory corruption and data leaks. Understanding these risks is crucial to protect your systems. 
+So now what? 
+If you use these programs, update them immediately with the latest patches to protect yourself.  If you're on a security team, grab the latest Snort rules to detect possible exploits and keep an eye out for suspicious activity.  And if you're a developer, take notes from these vulnerabilities to strengthen your own code and avoid similar pitfalls in your projects. Security is everyone’s job!
+Top security headlines of the week 
+NHS in England calls for blood donors after ransomware attack
+The UK’s National Health Service (NHS) is calling for one million donors after a Qilin ransomware attack last summer caused a severe shortage of O-negative blood. (
+Cybernews
+) 
+Let them eat junk food: Major organic supplier to Whole Foods, Walmart, hit by cyberattack
+North American grocery wholesaler United Natural Foods told regulators that a cyber incident temporarily disrupted operations, including its ability to fulfill customer orders. (
+The Register
+) 
+Google fixes bug that could reveal users’ private phone numbers
+ 
+A security researcher has discovered a bug that could be exploited to reveal the private recovery phone number of almost any Google account without alerting its owner, potentially exposing users to privacy and security risks. (
+TechCrunch
+) 
+SinoTrack GPS Devices Vulnerable to Remote Vehicle Control via Default Passwords
+ 
+Two security vulnerabilities have been disclosed in SinoTrack GPS devices that could be exploited to control certain remote functions on connected vehicles and even track their locations. (
+T
+he Hacker News
+)
+Can’t get enough Talos? 
+Microsoft Patch Tuesday for June 2025
+ 
+Microsoft has released its monthly security update, which includes 66 vulnerabilities affecting a range of products, including 10 that Microsoft marked as “critical.” 
+Read the 
+blog
+ here
+.
+PathWiper targeting Ukrainian critical infrastructure
+ 
+Cisco Talos observed a destructive attack on a critical infrastructure entity within Ukraine, using a previously unknown wiper we are calling “PathWiper.” 
+Learn more.
+Upcoming events where you can find Talos 
+REcon
+ (June 27 – 29) Montreal, Canada 
+NIRMA
+ (July 28 – 30) St. Augustine, FL 
+Black Hat USA
+ (Aug. 2 – 7) Las Vegas, NV 
+Most prevalent malware files from Talos telemetry over the past week 
+SHA 256: 9f1f11a708d393e0a4109ae189bc64f1f3e312653dcf317a2bd406f18ffcc507
+ 
+MD5: 2915b3f8b703eb744fc54c81f4a9c67f 
+VirusTotal: 
+https://www.virustotal.com/gui/file/9f1f11a708d393e0a4109ae189bc64f1f3e312653dcf317a2bd406f18ffcc507
+Typical Filename: VID001.exe 
+Claimed Product: N/A 
+Detection Name: Win.Worm.Coinminer::1201 
+SHA 256: 5616b94f1a40b49096e2f8f78d646891b45c649473a5b67b8beddac46ad398e1
+ 
+MD5: 3e10a74a7613d1cae4b9749d7ec93515 
+VirusTotal: 
+https://www.virustotal.com/gui/file/5616b94f1a40b49096e2f8f78d646891b45c649473a5b67b8beddac46ad398e1
+Typical Filename: IMG001.exe 
+Claimed Product: N/A 
+Detection Name: Win.Dropper.Coinminer::1201 
+SHA 256: c67b03c0a91eaefffd2f2c79b5c26a2648b8d3c19a22cadf35453455ff08ead0
+ 
+MD5: 8c69830a50fb85d8a794fa46643493b2  
+VirusTotal: 
+https://www.virustotal.com/gui/file/c67b03c0a91eaefffd2f2c79b5c26a2648b8d3c19a22cadf35453455ff08ead0
+Typical Filename: AAct.exe  
+Claimed Product: N/A  
+Detection Name: PUA.Win.Dropper.Generic::1201 
+SHA 256: a31f222fc283227f5e7988d1ad9c0aecd66d58bb7b4d8518ae23e110308dbf91  
+ 
+MD5: 7bdbd180c081fa63ca94f9c22c457376   
+VirusTotal: 
+https://www.virustotal.com/gui/file/a31f222fc283227f5e7988d1ad9c0aecd66d58bb7b4d8518ae23e110308dbf91/details
+  
+Typical Filename: IMG001.exe  
+Detection Name: Simple_Custom_Detection   
+SHA256 275A021BBFB6489E54D471899F7DB9D1663FC695EC2FE2A2C4538AABF651FD0F
+ 
+MD5: 44d88612fea8a8f36de82e1278abb02f 
+VirusTotal: 
+https://www.virustotal.com/gui/file/275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f/detection
+Typical Filename: eicar.com-42987 
+Detection Name: eicarTestFile 
+
+
+
+
+
+
+
+
+Share this post

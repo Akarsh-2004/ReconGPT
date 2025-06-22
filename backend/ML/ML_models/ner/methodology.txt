@@ -1,0 +1,97 @@
+PAHSE 1----------------------------------------------------------------------------------------------------
+
+
+✅ ReconGPT NER Pipeline: Phase 1 Completed
+🔹 1. Selected High-Quality Threat Intelligence Sources
+we picked 5 top-tier websites to gather rich cybersecurity data:
+
+MITRE ATT&CK — TTPs and adversary behaviors
+CISA.gov — CVEs, alerts, threat campaigns
+TheHackerNews — Cyber incident reports
+AlienVault OTX — Community threat intel & IOCs
+Cisco Talos Blog — Malware breakdowns & technical reports
+
+🔹 2. Built & Fixed Web Scrapers
+Implemented scrapers using requests, BeautifulSoup, and newspaper3k
+
+Fixed Talos parsing errors by dynamically handling missing tags and relative URLs
+Exported each article/report as a .txt file
+
+🔹 3. Merged Data into One Dataset
+Combined all scraped .txt files into a single all_data.txt file
+
+Verified loading and preview inside a Jupyter notebook
+
+🔹 4. Created IOC Regex Tagger
+Developed a custom tag_iocs(text) function to extract:
+
+✅ IP addresses
+✅ Domain names (strict, realistic TLDs)
+✅ File hashes (MD5, SHA1, SHA256)
+✅ File paths (Unix and Windows)
+✅ File names (e.g., .py, .zip, .exe)
+✅ Email addresses (optional)
+
+🔹 5. Verified Working Extraction
+Ran IOC extractor on wer dataset
+
+Verified correct matches (e.g., SHA hashes, Snort.org, file paths)
+Identified and corrected false positives like mistaking nvidia.py as a domain
+
+PHASE 2----------------------------------------------------
+
+2. Switched from NLTK to spaCy
+Faced issues with NLTK's punkt → switched to spaCy for cleaner tokenization
+
+Installed and loaded spaCy model:
+
+python
+Copy code
+import spacy
+nlp = spacy.load("en_core_web_sm")
+Tokenized the document:
+
+python
+Copy code
+doc = nlp(documents[0].lower())
+tokens = [token.text for token in doc]
+✅ 3. Generated Bigrams
+Used nltk.bigrams() on tokens:
+
+python
+Copy code
+from nltk import bigrams
+bi_tokens = list(bigrams(tokens))
+Sample output:
+
+css
+Copy code
+[('famous', 'chollima'), ('chollima', 'deploying'), ('deploying', 'python'), ...]
+✅ 4. Encoded Bigrams to Integer IDs
+Created a vocabulary of unique bigrams:
+
+python
+Copy code
+bigram_vocab = {bg: idx for idx, bg in enumerate(set(bi_tokens))}
+bigram_ids = [bigram_vocab[bg] for bg in bi_tokens]
+Result: numerical sequence of document in bigram form
+
+✅ What You Now Have
+Artifact	Description
+tokens	Word tokens from threat intel corpus
+bi_tokens	List of token bigrams
+bigram_vocab	Mapping from bigram → integer ID
+bigram_ids	Numerical encoding of your entire document
+
+
+
+Phase 3----------------------------------------------------------------------------------------------------------
+🔐 Phase 3-A: IOC Entity Labeling via Regex
+We’ll define patterns for:
+
+Entity Type	Label	Example
+IP Address	B-IP	192.168.1.1
+Domain	B-DOMAIN	malicious-example.com
+Hash	B-HASH	d41d8cd98f00b204e9800998ecf8427e
+Filepath	B-FILE	/usr/bin/malware
+Filename	B-FILE	update.dll

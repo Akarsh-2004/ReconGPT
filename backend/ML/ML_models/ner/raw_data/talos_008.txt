@@ -1,0 +1,144 @@
+A new author has appeared
+
+
+
+
+
+
+By 
+
+
+Amy Ciminnisi
+
+
+
+
+
+
+
+            Thursday, May 29, 2025 14:00
+        
+
+
+
+
+
+                            Threat Source newsletter
+                        
+
+
+
+
+
+
+
+
+
+
+Welcome to this week’s edition of the Threat Source newsletter. 
+In the words of Game Changer host Sam Reich, “And your host, me! I’ve been here the whole time!”  
+Okay, maybe it’s not the whole time, but for the past three months, I've been settling into my role here at Cisco Talos. Editing blogs, writing and publishing social media posts, and organizing this newsletter every week — I've been working behind the scenes to ensure everything runs smoothly and delivers the most helpful information to the cybersecurity community. 
+I often get raised eyebrows when I mention that, prior to my last job as a technical writer, I had never worked in STEM. I don't blame them, because how could someone who had never opened Terminal (and admittedly, up until last month sometimes forgot what it was called) end up with a job offer from Talos? 
+My college degree is in anthropology, or the study of humans and culture, past and present. Though my niche research interest was/is Malaysian culture, LGBTQ+ history, and politics (even getting a research grant to travel to peninsular Malaysia for a month), my first career out of college was fundraising for a homeless services nonprofit in Arlington, Virginia. After I moved to another state, I held a content writing position at a startup, where I wrote fundraising letters and emails for a portfolio of over 200 nonprofits.
+Learning the four-string 
+Malaysian sape’
+. 
+While I felt invested in these organizations' missions, I began to feel understimulated. I craved a career that would build on my experiences and skills while giving me the chance to learn and grow in new, exciting ways. While searching for new jobs on LinkedIn, I happened upon a nearby physical layer encryption startup that was seeking a technical writer. I had no clue what the physical layer even was, so I was grateful when they took a chance on hiring me. I found that my background in anthropological research, as well as my ability to adapt content for a lot of different audiences, became a huge asset in technical writing. 
+I’ve always said that if I could magically be paid to go to school forever, I would. Technical writing (and its cousins, like my current position) is as close as I can get! After I joined Talos, I found that people here are incredibly kind and very patient. Like Jon Munshaw, the person who held this role before me, my favorite question to Talos researchers is “Can you explain this to me like I’m your grandmother?” Not only does it help me grasp the concepts they're sharing, but it also helps me find the clearest way to communicate them. 
+Talosians are brilliant people, and I’m only human, so it’s easy to feel like you don't belong when you don’t have a STEM background. In a recent moment of doubt, I remembered that Joe had published a 
+newsletter introduction about imposter syndrome
+ two days after I started at Talos. One line stuck out to me: “You are where you are because others saw value in your work.” 
+As I took in the sentence, I realized that it was entirely true. If there's one thing that I’ve learned over the past few months, it’s that everyone you meet has something to teach and everyone has something to learn. Our collective knowledge and experience are gifts we share with one another. I hope that the content I edit and produce will bring value to you. 
+So what kind of content will I bring to this newsletter? You can expect intros that aren't just informative, but also relatable and engaging. They may even remind you of your beginnings in cybersecurity. I'll make complex topics feel accessible, highlight the human side of cybersecurity, and share insights that help the community grow stronger. 
+At the end of the day, our work isn't just about threats, but about the humans working tirelessly to defend against them.
+The one big thing 
+Talos has identified 
+threats disguised as legitimate AI solution installers
+, including ransomware like CyberLock and Lucky_Gh0$t, and a destructive malware called Numero. These threats highlight how malicious actors are leveraging the rise of AI to distribute harmful software. 
+Why do I care? 
+Cybercriminals are targeting the trust and excitement around AI tools to deliver malware, which could affect anyone looking to adopt AI for personal or business use, putting their systems and data at risk. Understanding these threats helps you stay vigilant and avoid falling victim to such deceptive tactics. 
+So now what? 
+Snort SIDs and ClamAV detections are available at the bottom of the 
+blog post
+. Otherwise, always verify the source of any AI tools or software before downloading, use trusted cybersecurity solutions to protect your systems, and stay informed about emerging threats by keeping up with updates from reliable sources like Cisco Talos.
+Top security headlines of the week 
+MathWorks, Creator of MATLAB, Confirms Ransomware Attack
+ 
+The attack dirsupted MathWorks' systems and online applications, but it remains unclear which ransomware group targeted the software company and whether they stole any data. (
+DarkReading
+) 
+Deepfakes, Scams, and the Age of Paranoia
+ 
+This hit home, both as a jobseeker within the past year and a young(er) person who’s worried about her parents’ security. I may be able to parse AI portraits with six fingers and hair phasing through their clothes, but have you ever seen a convincing deepfake? Phew. (
+Wired
+) 
+Companies Warned of Commvault Vulnerability Exploitation
+ 
+CISA says that the ongoing exploitation of a Commvault vulnerability that was targeted as a zero-day is likely part of a broader campaign against software-as-a-service (SaaS) solutions. (
+SecurityWeek
+) 
+US student agrees to plead guilty to hack affecting tens of millions of students
+A Massachusetts student has agreed to plead guilty to federal charges relating to hacking and extorting one of the largest U.S. education tech companies. PI included names, addresses, phone numbers, Social Security numbers, medical information, and school grades. (
+TechCrunch
+)
+Can’t get enough Talos? 
+UAT-6382 exploits Cityworks zero-day vulnerability to deliver malware
+Talos has found intrusions in enterprise networks of local governing bodies in the United States (U.S.), beginning January 2025 when initial exploitation first took place. 
+Read the blog here.
+The day I found an APT group in the most unlikely place
+ 
+In this Dark Reading Confidential episode, Talosian Vitor Ventura shares stories about the tricks he used to track down APTs, and the surprises discovered along the way. 
+Listen to the podcast here.
+Upcoming events where you can find Talos 
+Cisco Live U.S.
+ (June 8 – 12) San Diego, CA 
+NIRMA
+ (July 28 – 30) St. Augustine, FL 
+Black Hat USA
+ (Aug. 2 - 7) Las Vegas, NV
+Most prevalent malware files from Talos telemetry over the past week 
+SHA 256: 9f1f11a708d393e0a4109ae189bc64f1f3e312653dcf317a2bd406f18ffcc507
+ 
+MD5: 2915b3f8b703eb744fc54c81f4a9c67f 
+VirusTotal: 
+https://www.virustotal.com/gui/file/9f1f11a708d393e0a4109ae189bc64f1f3e312653dcf317a2bd406f18ffcc507
+  
+Typical Filename: VID001.exe 
+Claimed Product: N/A 
+Detection Name: Win.Worm.Coinminer::1201 
+SHA 256: 59f1e69b68de4839c65b6e6d39ac7a272e2611ec1ed1bf73a4f455e2ca20eeaa
+ 
+MD5: df11b3105df8d7c70e7b501e210e3cc3 
+VirusTotal: 
+https://www.virustotal.com/gui/file/59f1e69b68de4839c65b6e6d39ac7a272e2611ec1ed1bf73a4f455e2ca20eeaa
+ 
+Typical Filename: DOC001.exe 
+Claimed Product: N/A 
+Detection Name: Win.Worm.Coinminer::1201 
+SHA256:3294df8e416f72225ab1ccf0ed0390134604bc747d60c36fbb8270f96732e341
+ 
+MD5: b6bc3353a164b35f5b815fc1c429eaab 
+VirusTotal: 
+https://www.virustotal.com/gui/file/3294df8e416f72225ab1ccf0ed0390134604bc747d60c36fbb8270f96732e341
+ 
+Typical Filename: b6bc3353a164b35f5b815fc1c429eaab.msi 
+Claimed Product: n/a  
+Detection Name: Simple_Custom_Detection 
+SHA 256: a31f222fc283227f5e7988d1ad9c0aecd66d58bb7b4d8518ae23e110308dbf91  
+ 
+MD5: 7bdbd180c081fa63ca94f9c22c457376  
+VirusTotal: 
+https://www.virustotal.com/gui/file/a31f222fc283227f5e7988d1ad9c0aecd66d58bb7b4d8518ae23e110308dbf91
+ 
+Typical Filename: c0dwjdi6a.dll  
+Claimed Product: N/A   
+Detection Name: Trojan.GenericKD.33515991 
+
+
+
+
+
+
+
+
+Share this post
